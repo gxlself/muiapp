@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <link href="css/mui.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="css/all.css" />
+    <link rel="stylesheet" href="css/iconfont.css" />
+    <script src="js/login.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/mui.min.js"></script>
+    <script src="js/h.js"></script>
+</head>
+<body>
+	<!--标题部分-->
+	<header class="mui-bar mui-bar-nav index_header" id="indexTitle">
+		<span class="index_header_span">大同</span>
+		<span class="index_header_icon iconfont icon-saoyisao" id="scan"></span>
+        <div class="mui-input-row mui-search index_search">
+            <input type="search" placeholder="搜索">
+        </div>
+	</header>
+	<!--内容主体-->
+	<div class="mui-content">
+	    
+	</div>
+	<!--底部导航部分-->
+	<nav class="mui-bar mui-bar-tab" id="navFooter">
+	    <a class="mui-tab-item mui-active" id="sub1">
+	        <span class="mui-icon mui-icon-home"></span>
+	        <span class="mui-tab-label">首页</span>
+	    </a>
+	    <a class="mui-tab-item" id="sub2">
+	        <span class="mui-icon mui-icon-search"></span>
+	        <span class="mui-tab-label">查询</span>
+	    </a>
+	    <a class="mui-tab-item" id="sub3">
+	        <span class="mui-icon iconfont icon-faxian"></span>
+	        <span class="mui-tab-label">发现</span>
+	    </a>
+	    <a class="mui-tab-item" id="sub4">
+	        <span class="mui-icon iconfont icon-huiyuan"></span>
+	        <span class="mui-tab-label">个人中心</span>
+	    </a>
+	</nav>
+</body>
+<script type="text/javascript" charset="utf-8">
+    mui.init({
+    	subpages:[{
+    		url:'sub/sub1.html',
+  			id:'sub/sub1.html',
+  			styles:{
+  				top:'44px',
+  				bottom:'50px',
+  				width:'100%',
+  				left:'0'
+  			}
+    	},{
+    		url:'sub/sub2.html',
+  			id:'sub/sub2.html',
+  			styles:{
+  				top:'44px',
+  				bottom:'50px',
+  				width:'100%',
+  				left:'100%'
+  			}
+    	},{
+    		url:'sub/sub3.html',
+  			id:'sub/sub3.html',
+  			styles:{
+  				top:'44px',
+  				bottom:'50px',
+  				width:'100%',
+  				left:'200%'
+  			}
+    	},{
+    		url:'sub/sub4.html',
+  			id:'sub/sub4.html',
+  			styles:{
+  				top:'44px',
+  				bottom:'50px',
+  				width:'100%',
+  				left:'300%'
+  			}
+    	}]
+    });
+    
+    //用于获取导航对应点击事件 切换页面
+    document.getElementById("sub1").addEventListener('tap',function(){changeSub(0);});
+    document.getElementById("sub2").addEventListener('tap',function(){changeSub(1);});
+    document.getElementById("sub3").addEventListener('tap',function(){changeSub(2);});
+    document.getElementById("sub4").addEventListener('tap',function(){
+         /*var uid=plus.storage.getItem('uid');
+      		if(uid == null){
+      			wxlogin('changeSub(3)');
+      			return false;
+      		}*/
+      	 changeSub(3)
+    });
+    //封装的方法  用于点击导航切换事件
+    function changeSub(index){
+      		//0       0      100%       200%        300%
+      		//1    -100%      0         -100%       -200%
+      		
+  		var sub1=plus.webview.getWebviewById('sub/sub1.html');
+  		var sub2=plus.webview.getWebviewById('sub/sub2.html');
+  		var sub3=plus.webview.getWebviewById('sub/sub3.html');
+  		var sub4=plus.webview.getWebviewById('sub/sub4.html');
+  		
+  		sub1.setStyle({left:(0-index)*100+'%'});
+  		sub2.setStyle({left:(1-index)*100+'%'});
+  		sub3.setStyle({left:(2-index)*100+'%'});
+  		sub4.setStyle({left:(3-index)*100+'%'});
+	}
+    
+    /*---------------------------对切换页面的标题封装方法------------------------------*/
+   mui.plusReady(function () {
+   	   plus.storage.removeItem("lastMsgId");
+       mui.getJSON('http://db.gxlself.com/msg.php'
+        ,function(data){
+       		//console.log(JSON.stringify(data));
+       		var lastMsgId=plus.storage.getItem("lastMsgId");
+       		
+       		if(lastMsgId == null || lastMsgId!=data.msgId){
+       			plus.push.createMessage(data.msg,"LocalMSG",{cover:false});
+       			plus.storage.setItem("lastMsgId",data.msgId+'');
+       		}
+       		
+       	}
+       );
+       
+       
+       /*var version='10.0';
+       mui.getJSON('http://hoa.hcoder.net/index.php?m=ver'
+       ,function(data){
+       		if(version != data){
+       			mui.confirm('是否进行版本更新','版本更新',['取消','确认'],function (e) {
+       				//e.index
+       				if(e.index==1){
+       					mui.toast('正在版本更新...');
+       					var dtask=plus.downloader.createDownload(data.src,{method:"GET"}
+       					,function(d,status){
+       						//console.log(2145);
+       						//console.log(JSON.stringify(d.filename));
+       						//console.log(JSON.stringify(status));
+       						if(status == 200){
+       							mui.toast('新版本下载成功,开始安装');
+       							plus.runtime.install(d.filename);
+       							mui.toast('安装成功');
+       						}else{
+       							mui.toast('下载失败');	
+       						}
+       					})
+       					dtask.start();
+       				}else{
+       					mui.toast('已取消更新');
+       				}
+       			})
+       		}
+       	}
+       );*/
+   })
+</script>
+</html>

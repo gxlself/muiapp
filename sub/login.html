@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.css" rel="stylesheet" />
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/login.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">登录</h1>
+		</header>
+		<div class="mui-content">
+		    <ul class="mui-table-view">
+		    	<li class="mui-table-view-cell mui-media" id="wxLogin">
+		            <a href="javascript:;">
+		                <img class="mui-media-object mui-pull-left" src="../images/weixin.png">
+		                <div class="mui-media-body" style="padding-top: 10px;">
+		                                                           微信
+		                </div>
+		            </a>
+		        </li>
+		        <li class="mui-table-view-cell mui-media" id="qqLogin">
+		            <a href="javascript:;">
+		                <img class="mui-media-object mui-pull-left" src="../images/qq.png">
+		                <div class="mui-media-body" style="padding-top: 10px;">
+		                    QQ
+		                </div>
+		            </a>
+		        </li>
+		        
+		        <li class="mui-table-view-cell mui-media" id="sinaLogin">
+		            <a href="javascript:;">
+		                <img class="mui-media-object mui-pull-left" src="../images/sinaweibo.png">
+		                <div class="mui-media-body" style="padding-top: 10px;">
+		                                                           微博
+		                </div>
+		            </a>
+		        </li>
+		    </ul>
+		</div>
+	</body>
+	<script type="text/javascript">
+			mui.init();
+			mui.plusReady(function () {
+			    mui("#qqLogin")[0].addEventListener('tap',function(){
+					qqlogin();
+				});
+				mui("#wxLogin")[0].addEventListener('tap',function(){
+					wxlogin();
+				});
+				mui("#sinaLogin")[0].addEventListener('tap',function(){
+					sinalogin();
+				});
+			})
+	</script>
+</html>

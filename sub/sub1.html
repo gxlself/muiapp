@@ -1,0 +1,203 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/all.css"/>
+		<script src="../js/mui.min.js"></script>
+	</head>
+
+	<body>
+		<div class="mui-content">
+		    <div id="slider" class="mui-slider">
+		      <span class="mui-icon mui-icon-refresh" id="reSli" style="color:#f82;position: absolute;z-index: 9999;right: 10px;top:10px;padding: 4px;"></span>
+		      <div class="mui-slider-group mui-slider-loop">
+		        <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+		        <div class="mui-slider-item mui-slider-item-duplicate">
+		          <a href="#">
+		            <img src="http://placehold.it/400x300" id="sl4_4">
+		          </a>
+		        </div>
+		        <!-- 第一张 -->
+		        <div class="mui-slider-item">
+		          <a href="#">
+		            <img src="http://placehold.it/400x300" id="sl1">
+		          </a>
+		        </div>
+		        <!-- 第二张 -->
+		        <div class="mui-slider-item">
+		          <a href="#">
+		            <img src="http://placehold.it/400x300" id="sl2">
+		          </a>
+		        </div>
+		        <!-- 第三张 -->
+		        <div class="mui-slider-item">
+		          <a href="#">
+		            <img src="http://placehold.it/400x300" id="sl3">
+		          </a>
+		        </div>
+		        <!-- 第四张 -->
+		        <div class="mui-slider-item">
+		          <a href="#">
+		            <img src="http://placehold.it/400x300" id="sl4">
+		          </a>
+		        </div>
+		        <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+		        <div class="mui-slider-item mui-slider-item-duplicate">
+		          <a href="#">
+		            <img src="http://placehold.it/400x300" id="sl1_1">
+		          </a>
+		        </div>
+		      </div>
+		      <div class="mui-slider-indicator">
+		        <div class="mui-indicator mui-active"></div>
+		        <div class="mui-indicator"></div>
+		        <div class="mui-indicator"></div>
+		        <div class="mui-indicator"></div>
+		      </div>
+		    </div>
+			    <div id="refreshContainer">
+			    	<ul class="mui-table-view" id="listUl">
+			    	    <p style="text-align: center;border-top: 1px solid #D1D1D1;width: 50%;margin: 0 auto;">下拉刷新加载新内容</p>
+	                </ul>
+	            </div>	
+		</div>
+	</body>
+    <script type="text/javascript">
+		mui.init({
+			pullRefresh : {//初始化下拉刷新
+			    container:"#refreshContainer",//下拉刷新容器标识，querySelector能定位的css选择器均可，比如：id、.class等
+			    down : {
+				    height:50,//可选,默认50.触发下拉刷新拖动距离,
+				    auto: true,//可选,默认false.首次加载自动下拉刷新一次
+				    contentdown : "下拉可以刷新加载",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+				    contentover : "释放立即刷新加载",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+				    contentrefresh : "正在加载...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+				    callback :getList //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+			    }
+		  	}
+		});
+		/****************************************下拉刷新和加载封装方法开始*************************************************/
+		var page=1;
+		function getList(){
+			 page++;
+			 //console.log(page);
+			 mui.ajax('http://db.gxlself.com/sub'+page+'.php',
+		    {
+		    	type:'get',//HTTP请求类型
+		    	timeout:10000,//超时时间设置为10秒；
+		    	success:function(data){
+		    		data=JSON.parse(data);
+		    		var time=new Date();
+		    		var localTime=(time.getMonth()+1)+'月'+time.getDate()+'日'+time.getHours()+'时'+time.getMinutes()+'分'+time.getSeconds()+'秒';
+		    		//console.log(data);
+		    		//console.log(data.sub1Object);
+		    		var str='';
+		    		for(i=0;i<data.sub1Object.length;i++){
+		    			str+='<li class="mui-table-view-cell mui-media"><a href="javascript:"><img class=" mui-pull-left" style="width:80px;height: 115px;" src="'+data.sub1Object[i].src+'"><div class="mui-media-body sub1_info"><h3>'+data.sub1Object[i].name+'</h3><p class="mui-ellipsis">'+"更新于"+localTime+'</p><p class="mui-ellipsis">'+data.sub1Object[i].pernum+'</p><p class="mui-ellipsis">'+data.sub1Object[i].dao+'</p><p class="mui-ellipsis">'+data.sub1Object[i].star+'</p></div></a></li>';
+		    		}
+		    		//console.log(str);
+		    		var oDiv=document.createElement("div");
+		    		oDiv.innerHTML=str;
+		    		mui("#listUl")[0].insertBefore(oDiv,mui("#listUl")[0].children[0]);
+		    		 //停止下拉刷新
+					mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
+					//第十一步:重置下拉刷新状态
+					mui('#refreshContainer').pullRefresh().refresh();
+		    	},
+		    	error:function(xhr,type,errorThrown){
+					mui('#refreshContainer').pullRefresh().endPulldownToRefresh();
+					mui('#refreshContainer').pullRefresh().refresh();
+		    		console.log("已无更多电影"+type);
+		    		mui.toast("已无更多电影");
+		    		page--;
+		    	}
+		    });
+		}
+		/***************************************下拉刷新和加载封装方法结束**************************************************/
+		mui.plusReady(function () {
+			mui(".mui-slider").slider({interval:1500});
+		    var _self  = plus.webview.currentWebview();                  //获取当前窗口
+		    var _next  = plus.webview.getWebviewById("sub/sub2.html");   //获取sub2窗口首页
+		    var _index = plus.webview.getLaunchWebview();                //获取应用首页
+		    
+		    _self.drag({
+		    	direction:'left',
+		    	moveMode:'followFinger'
+		    },{
+		    	view:_next,
+		    	moveMode:'follow'
+		    },function(e){
+		    	console.log(JSON.stringify(e));
+		    	if(e.type=='end' && e.result){
+		    		_index.evalJS('h("#navFooter").find("a").removeClass("mui-active");h("#sub2").addClass("mui-active");');
+		    	}
+		    })
+		    var reqNum=2;
+		    //对轮播图的ajax请求获取
+		    function slImg(num){
+		    	mui.ajax('http://db.gxlself.com/qk'+num+'.php',
+			    {   
+			    	type:'get',//HTTP请求类型
+			    	timeout:10000,//超时时间设置为10秒；
+			    	success:function(data){
+			    		data=JSON.parse(data);
+			    		//console.log(data);
+			    		//console.log(data.imgObject[3].img);
+			    		mui("#sl1_1")[0].src =data.imgObject[0].img;
+			    		mui("#sl1")[0].src   =data.imgObject[0].img;
+			    		mui("#sl2")[0].src   =data.imgObject[1].img;
+			    		mui("#sl3")[0].src   =data.imgObject[2].img;
+			    		mui("#sl4")[0].src   =data.imgObject[3].img;
+			    		mui("#sl4_4")[0].src =data.imgObject[3].img;
+			    	},
+			    	error:function(xhr,type,errorThrown){
+			    		console.log("轮播图片获取失败"+type);
+			    		mui.toast("轮播图片获取失败"+type)
+			    	}
+			    });
+		    }
+		    slImg(reqNum);
+		    mui("#reSli")[0].addEventListener('tap',function(){
+		    	if(reqNum==2){
+		    		reqNum=1;
+		    		//mui.toast('reqnum变为1');
+		    	}else{
+		    		reqNum=2;
+		    	             	//mui.toast('reqnum变为2');
+		    	}
+		    	slImg(reqNum);
+		    })
+		    
+		    //对list清单中的ajax请求
+		   /* mui.ajax('http://db.gxlself.com/sub1.php',
+		    {
+		    	type:'get',//HTTP请求类型
+		    	timeout:10000,//超时时间设置为10秒；
+		    	success:function(data){
+		    		data=JSON.parse(data);
+		    		//console.log(data);
+		    		//console.log(data.sub1Object);
+		    		var str='';
+		    		for(i=0;i<data.sub1Object.length;i++){
+		    			str+='<li class="mui-table-view-cell mui-media"><a href="javascript:showMinfo('+i+')"><img class=" mui-pull-left" style="width:70px;height: 105px;" src="'+data.sub1Object[i].src+'"><div class="mui-media-body sub1_info"><h2>'+data.sub1Object[i].name+'</h2><p class="mui-ellipsis">'+data.sub1Object[i].pernum+'</p><p class="mui-ellipsis">'+data.sub1Object[i].dao+'</p><p class="mui-ellipsis">'+data.sub1Object[i].star+'</p></div></a></li>';
+		    		}
+		    		//console.log(str);
+		    		mui("#listUl")[0].innerHTML=str;
+		    		
+		    		
+		    	},
+		    	error:function(xhr,type,errorThrown){
+		    		console.log("电影列表获取失败"+type);
+		    		mui.toast("电影列表获取失败"+type)
+		    	}
+		    });*/
+		});
+		
+		function showMinfo(a){
+			console.log(a);
+		}
+	</script>
+</html>

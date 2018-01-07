@@ -1,0 +1,146 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/iconfont.css"/>
+		<link rel="stylesheet" type="text/css" href="../css/all.css"/>
+		<script src="../js/mui.min.js"></script>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<header style="border-bottom: 1px solid #D1D1D1;width: 94%;margin: 0 auto;">
+				<nav class="mui-bar-tab" style="padding-top: 15px;">
+				    <a class="mui-tab-item">
+				        <span class="mui-icon iconfont icon-dingdan"></span>
+				        <span class="mui-tab-label">台词</span>
+				    </a>
+				    <a class="mui-tab-item">
+				        <span class="mui-icon iconfont icon-xiaoxi"></span>
+				        <span class="mui-tab-label">话题</span>
+				    </a>
+				    <a class="mui-tab-item">
+				        <span class="mui-icon iconfont icon-daifukuan"></span>
+				        <span class="mui-tab-label">票房</span>
+				    </a>
+				    <a class="mui-tab-item">
+				        <span class="mui-icon iconfont icon-dingyue"></span>
+				        <span class="mui-tab-label">演出</span>
+				    </a>
+				</nav>
+			</header>
+			
+		    <div id="sub3_content">
+		    	<p style="text-align: center;">更多动态请下拉刷新添加</p>
+		    </div>
+		    
+		</div>
+	</body>
+<script type="text/javascript">
+	mui.init({
+		pullRefresh : {//初始化下拉刷新
+			    container:"#sub3_content",//下拉刷新容器标识，querySelector能定位的css选择器均可，比如：id、.class等
+			    down : {
+				    height:50,//可选,默认50.触发下拉刷新拖动距离,
+				    auto: true,//可选,默认false.首次加载自动下拉刷新一次
+				    contentdown : "下拉可以刷新加载",//可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+				    contentover : "释放立即刷新加载",//可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+				    contentrefresh : "正在加载...",//可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+				    callback :getList //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+			    }
+		}
+	});
+	/***************************************************************************************************/
+	var page=1;
+	function getList(){
+		  page++;
+		  var time=new Date();
+		  var localTime=(time.getMonth()+1)+'月'+time.getDate()+'日'+time.getHours()+'时'+time.getMinutes()+'分'+time.getSeconds()+'秒';
+		  //console.log(page);
+		  mui.ajax('http://db.gxlself.com/tpinfo'+page+'.php',
+		  {
+		  	type:'get',//HTTP请求类型
+		  	timeout:10000,//超时时间设置为10秒；
+		  	success:function(data){
+		  		data=JSON.parse(data);
+		   	     //console.log(data.tpObject);
+		   	     var objd=data.tpObject;
+		   	     var str='';
+		   	     for(var i=0;i<data.tpObject.length;i++){
+		   	     	str+='<div class="infoSet sub3_border"><div class="mui-card-content" style="line-height: 0;"><img src="'+objd[i].src1+'"/ width="100%" height="200px"></div><div class="mui-card-footer"><div class="mui-media-body" style="padding: 0px;"><div style="margin-bottom: 25px;">'+objd[i].bigInfo+'</div><p class="sub3_p">更新于&nbsp;&nbsp;&nbsp;'+localTime+'</p></div></div></div><li class="mui-table-view-cell mui-media sub3_border sub3_li"><a href="javascript:;"><img class="mui-pull-right" style="width:145px;height: 105px;" src="'+objd[i].src2+'"><div class=" sub3_info">'+objd[i].info1+' </div><p class="sub3_p">阅读&nbsp;&nbsp;&nbsp;&nbsp;6553</p></a></li><li class="mui-table-view-cell mui-media sub3_border sub3_li"><a href="javascript:;"><img class="mui-pull-right" style="width:145px;height: 105px;" src="'+objd[i].src1+'"><div class=" sub3_info">'+objd[i].info2+'</div><p class="sub3_p">阅读 &nbsp;&nbsp;&nbsp;1256</p></a></li>';
+		   	     }
+		   	     var oDiv=document.createElement("div");
+		    	 oDiv.innerHTML=str;
+		    	 mui("#sub3_content")[0].insertBefore(oDiv,mui("#sub3_content")[0].children[0]);
+		    	 mui('#sub3_content').pullRefresh().endPulldownToRefresh();
+				 mui('#sub3_content').pullRefresh().refresh();
+		  	},
+		  	error:function(xhr,type,errorThrown){
+		  		mui('#sub3_content').pullRefresh().endPulldownToRefresh();
+				mui('#sub3_content').pullRefresh().refresh();
+		  		mui.toast('无更多动态');
+		  		console.log('无更多动态'+type);
+		  		page--;
+		  	}
+	  });
+	}
+	/***************************************************************************************************/
+	mui.plusReady(function () {
+		/*-----------------------------------页面的切换和拖动切换开始--------------------------------------*/
+	    var _self  = plus.webview.currentWebview();                  //获取当前窗口
+	    var _prev  = plus.webview.getWebviewById("sub/sub2.html");   //获取sub2窗口首页
+	    var _next  = plus.webview.getWebviewById("sub/sub4.html");   //获取sub2窗口首页
+	    var _index = plus.webview.getLaunchWebview();                //获取应用首页
+	    //当拖动当前页面向左移动时
+	    var uid=plus.storage.getItem('uid');
+	    if(!uid==null){
+	    	_self.drag({
+		    	direction:'left',
+		    	moveMode:'followFinger'
+		    },{
+		    	view:_next,
+		    	moveMode:'follow'
+		    },function(e){
+		    	console.log(JSON.stringify(e));
+		    	if(e.type=='end' && e.result){
+		    		_index.evalJS('h("#navFooter").find("a").removeClass("mui-active");h("#sub4").addClass("mui-active");');
+		    	}
+	    	});
+	    }
+	    _self.drag({
+	    	direction:'left',
+	    	moveMode:'followFinger'
+	    },{
+	    	view:_next,
+	    	moveMode:'follow'
+	    },function(e){
+	    	console.log(JSON.stringify(e));
+	    	if(e.type=='end' && e.result){
+	    		_index.evalJS('h("#navFooter").find("a").removeClass("mui-active");h("#sub4").addClass("mui-active");');
+	    	}
+	    });
+	    //当拖动当前页面向右移动时
+	    _self.drag({
+	    	direction:'right',
+	    	moveMode:'followFinger'
+	    },{
+	    	view:_prev,
+	    	moveMode:'follow'
+	    },function(e){
+	    	console.log(JSON.stringify(e));
+	    	if(e.type=='end' && e.result){
+	    		_index.evalJS('h("#navFooter").find("a").removeClass("mui-active");h("#sub2").addClass("mui-active");');
+	    		//_index.evalJS('mui("#indexTitle")[0].innerHTML="<h1 class="mui-title">查询信息</h1>";mui("#indexTitle")[0].innerHTML="<h1 class="mui-title">查询信息</h1>";');
+	    	}
+	    })
+	   /*-----------------------------------页面的切换和拖动切换结束--------------------------------------*/
+	  
+	});
+</script>
+</html>
+
+
+

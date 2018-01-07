@@ -1,0 +1,182 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.css" rel="stylesheet" />
+		<script src="../js/mui.min.js"></script>
+	</head>
+
+	<body>
+		<div class="mui-content">
+	    <form class="mui-input-group">
+	        <div class="mui-input-row">
+	            <label>服务区名称</label>
+	            <input id="partName" type="text" class="mui-input-clear" placeholder="服务区名称">
+	        </div>
+	        <div class="mui-input-row">
+	            <label>门店名称</label>
+	            <input id="shopName" type="text" class="mui-input-clear" placeholder="门店名称">
+	        </div>
+	    </form>
+	    <button id="select" type="button" class="mui-btn mui-btn-blue mui-btn-block">查询</button>
+	    <div class="mui-card">
+	    	<ul class="mui-table-view" id="countInfo"></ul>
+	    </div>
+	</div>
+	</body>
+<script type="text/javascript">
+	mui.init();
+	mui.plusReady(function () {
+		/*-----------------------------------拖动切换开始---------------------------------------*/
+	    var _self  = plus.webview.currentWebview();                  //获取当前窗口
+	    var _prev  = plus.webview.getWebviewById("sub/sub1.html");   //获取sub2窗口首页
+	    var _next  = plus.webview.getWebviewById("sub/sub3.html");   //获取sub2窗口首页
+	    var _index = plus.webview.getLaunchWebview();                //获取应用首页
+	    //当拖动当前页面向左移动时
+	    _self.drag({
+	    	direction:'left',                  //左划
+	    	moveMode:'followFinger'
+	    },{
+	    	view:_next,
+	    	moveMode:'follow'
+	    },function(e){
+	    	console.log(JSON.stringify(e));
+	    	if(e.type=='end' && e.result){
+	    		_index.evalJS('h("#navFooter").find("a").removeClass("mui-active");h("#sub3").addClass("mui-active");'); //利用evalJS给底部导航切换mui-active类
+	    	}
+	    });
+	    //当拖动当前页面向右移动时
+	    _self.drag({
+	    	direction:'right',
+	    	moveMode:'followFinger'
+	    },{
+	    	view:_prev,
+	    	moveMode:'follow'
+	    },function(e){
+	    	console.log(JSON.stringify(e));
+	    	if(e.type=='end' && e.result){
+	    		_index.evalJS('h("#navFooter").find("a").removeClass("mui-active");h("#sub1").addClass("mui-active");');   //利用evalJS给底部导航切换mui-active类
+	    	}
+	    })
+	    /*-----------------------------------拖动切换完毕---------------------------------------*/
+	   
+	   var partId=null;
+      		var shopId=null;
+      	    //对查询按钮绑定点击事件
+      	    mui("#select")[0].addEventListener('tap',function(){
+      	    	 //点击查询按钮     分别获取服务区框输入的值和门店框输入的值
+	      	     var inputPartVal=mui("#partName")[0].value;    //服务区输入的值
+	      	     var inputShopVal=mui("#shopName")[0].value;    //门店输入的值
+	      	     //console.log("服务区名称:  "+inputPartVal+"     门店名称:  "+inputShopVal);
+	      	     //对服务区名称  进行检索  ID
+	      	     if(inputPartVal.length!=0){
+	      	     	mui.ajax('http://test.eshangtech.com:6060/HighWay/Handler/handler_ajax.ashx?action_type=getTotalServerPart',{
+		      		 	dataType:'string',//服务器返回json格式数据
+		      		 	type:'get',//HTTP请求类型
+		      		 	timeout:10000,//超时时间设置为10秒；
+		      		 	success:function(data){
+		      		 		console.log(data)
+		      		 		//console.log(data.SERVERPARTObject);
+		      		 		//console.log());
+		      		 		data=JSON.parse(data);
+		      		 		for(var i=0;i<data.SERVERPARTObject.length;i++){
+		      		 			 if(inputPartVal==data.SERVERPARTObject[i].SERVERPART_NAME){
+		      		 			 	   partId=data.SERVERPARTObject[i].SERVERPART_ID;
+		      		 			 	   break;
+		      		 			 }else{
+		      		 			 	mui.toast('无此服务区');
+		      		 			 	return;
+		      		 			 }
+		      		 		}
+		      		 		//console.log(partId);//3798
+		      		 		//门店名称get
+		      		 		if(inputShopVal.length!=0){
+		      		 			mui.get('http://test.eshangtech.com:6060/HighWay/Handler/handler_ajax.ashx',
+		      		 		    {
+		      		 		    	action_type:"getServerPartShop",
+		      		 		    	action_data:partId
+		      		 		    },
+		      		 		    function(data){
+		      		 		    	data=JSON.parse(data);
+		      		 		    	//mui.toast(typeof data);
+				      				//console.log(data.ServerPartShopObject);
+				      				for(var i=0;i<data.ServerPartShopObject.length;i++){
+				      					if(inputShopVal==data.ServerPartShopObject[i].SHOPNAME){
+				      						 shopId=data.ServerPartShopObject[i].SERVERPARTSHOP_ID;
+				      						 //mui.toast(shopId);
+				      						 break;
+				      					}else{
+				      						mui.toast('无此门店');
+				      						return;
+				      					}
+				      				}
+				      				//console.log(shopId);
+				      				//mui.toast(shopId);
+				      				//结账信息get
+				      					mui.get('http://test.eshangtech.com:6060/HighWay/Handler/handler_ajax.ashx',
+				      					    {
+				      					    	action_type:"getServerPartEndaccount",
+				      					    	action_data:shopId
+				      					    },
+					      					function(data){
+					      						data=JSON.parse(data);
+					      						var str='';
+					      						var serverPartName=null;
+					      						var partShopName=null;
+					      						var tickeCount=null;
+					      						var totalCount=null;
+					      						var totalSellMount=null;
+					      						var time=null;
+					      						var mobilPay=null;
+					      						//console.log(typeof data.EndaccountObject);
+					      						for(var i=0;i<data.EndaccountObject.length;i++){
+					      						    serverPartName =  data.EndaccountObject[i].SERVERPART_NAME;
+					      						    partShopName   =  data.EndaccountObject[i].SHOPNAME;
+					      						    tickeCount     =  data.EndaccountObject[i].TICKETCOUNT;
+					      						    totalCount     =  data.EndaccountObject[i].TOTALCOUNT;
+					      						    totalSellMount =  data.EndaccountObject[i].TOTALSELLAMOUNT;
+					      						    time           =  data.EndaccountObject[i].ENDACCOUNT_DATE;
+					      						    mobilPay       =  data.EndaccountObject[i].MOBILEPAYMENT;
+					      						    //showInfo('+serverPartName+','+partShopName+','+tickeCount+','+totalCount+','+totalSellMount+','+time+','+mobilPay+')
+					      						    //str+='<li class="mui-table-view-cell mui-media"><a href="javascript:;"><img class="mui-media-object mui-pull-left" src="../images/qihoo.png" style="position:relative;top:10px"><div class="mui-media-body">'+serverPartName+i+'<p class="mui-ellipsis">'+partShopName+'</p><p class="mui-ellipsis">'+time+'</p></div></a></li>';
+					      						    str+='<li class="mui-table-view-cell mui-media"><a href="javascript:;"><img class="mui-media-object mui-pull-left" src="../images/qihoo.png" style="position:relative;top:10px"><div class="mui-media-body">'+serverPartName+i+'<p class="mui-ellipsis">'+partShopName+'</p><p class="mui-ellipsis">'+"客单数量 : "+tickeCount+'</p><p class="mui-ellipsis">'+"销售数量 : "+totalCount+'</p><p class="mui-ellipsis">'+"销售金额 : "+totalSellMount+'</p><p class="mui-ellipsis">'+"移动支付金额 : "+mobilPay+'</p><p class="mui-ellipsis">'+time+'</p></div></a></li>';
+					      						    //str+='<br>服务区名称: '+serverPartName+'<br>门店名称: '+partShopName+'<br>客单数量: '+tickeCount+'<br>销售数量: '+totalCount+'<br>销售金额: '+totalSellMount+'<br>结账时间: '+time;
+					      						}
+					      						mui("#countInfo")[0].innerHTML=str;
+								      	     }
+							      	     );
+				      				}
+				      			);
+		      		 		}else{//判断门店无值
+		      		 			mui.toast('请输入门店名称')
+		      		 		};
+		      		 	},
+		      		 	error:function(xhr,type,errorThrown){
+		      		 		console.log("服务区名称ajax请求失败");
+		      		 		mui.toast('服务区名称ajax请求失败');
+		      		 	}
+	      		 	});
+	      	     }else{
+	      	     	mui.toast('请输入服务区名称');
+	      	     }
+      	    }); 
+	});
+	function showInfo(a,b,c,d,e,f,g){
+ 		mui.openWindow({
+			url:'moreInfo.html',
+			id:'moreInfo.html',
+			extras:{
+				serverPartName:a,
+				partShopName:b,
+				tickeCount:c,
+				totalCount:d,
+				totalSellMount:e,
+				time:f
+			}
+		})
+     }
+	
+</script>
+</html>

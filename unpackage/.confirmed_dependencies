@@ -1,0 +1,96 @@
+{
+  "sub/sub1.html": {
+    "resources": [
+      "css/mui.min.css",
+      "js/mui.min.js",
+      "js/mui.js",
+      "css/mui.css",
+      "css/all.css",
+      "img/qk1.png",
+      "fonts/mui.ttf",
+      "images/iconfont-tianjia.png",
+      "sub/info.html"
+    ],
+    "refer": [
+      "sub/info.html"
+    ]
+  },
+  "index.html": {
+    "resources": [
+      "sub/sub1.html",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.css",
+      "js/h.js",
+      "css/all.css",
+      "css/iconfont.css",
+      "js/login.js"
+    ],
+    "refer": [
+      "sub/sub1.html",
+      "sub/sub4.html",
+      "sub/sub2.html",
+      "sub/sub3.html",
+      "sub/sub5.html"
+    ]
+  },
+  "sub/sub4.html": {
+    "resources": [
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "images/user-photo.png",
+      "fonts/mui.ttf",
+      "js/login.js",
+      "css/mui.css"
+    ],
+    "refer": [
+      "sub/info.html",
+      "sub/login.html"
+    ]
+  },
+  "sub/sub3.html": {
+    "resources": [
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "fonts/mui.ttf",
+      "css/iconfont.css",
+      "css/all.css",
+      "images/iconfont-tianjia.png",
+      "css/mui.css"
+    ]
+  },
+  "sub/sub2.html": {
+    "resources": [
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "fonts/mui.ttf",
+      "images/qihoo.png",
+      "js/mui.js",
+      "css/mui.css"
+    ]
+  },
+  "sub/sub5.html": {
+    "resources": [
+      "js/mui.min.js",
+      "css/mui.min.css"
+    ]
+  },
+  "sub/info.html": {
+    "resources": [
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.css"
+    ]
+  },
+  "sub/login.html": {
+    "resources": [
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "js/login.js",
+      "css/mui.css",
+      "images/qq.png",
+      "images/weixin.png",
+      "images/sinaweibo.png"
+    ]
+  }
+}

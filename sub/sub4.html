@@ -1,0 +1,147 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.css" rel="stylesheet" />
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/login.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<body>
+		<div class="mui-content">
+		    <ul class="mui-table-view" style="position: relative;top: -14px;padding: 10px;">
+		        <li class="mui-table-view-cell mui-media" id="login">
+		            <a href="javascript:;" id="chooseLogin">
+		                <img id="face" class="mui-media-object mui-pull-left" src="../images/user-photo.png">
+		                <div class="mui-media-body">
+		                    <span id="name" style="padding-left: 10px;" >点此登录</span>
+		                    <p class="mui-ellipsis" style="padding-left: 10px;">个性签名</p>
+		                </div>
+		            </a>
+		        </li>
+		    </ul>
+		    <!--<button id="outLogin" type="button" class="mui-btn mui-btn-red mui-btn-block">退出登录</button>-->
+		    <ul class="mui-table-view" style="margin: 10px 0px;" id="setInfo">
+		            <li class="mui-table-view-cell">
+		                <a class="mui-navigate-right seting">
+		                    消息设置
+		                </a>
+		            </li>
+		            <li class="mui-table-view-cell">
+		                <a class="mui-navigate-right seting">
+		                     屏蔽设置
+		                </a>
+		            </li>
+		            <li class="mui-table-view-cell">
+		                <a class="mui-navigate-right seting">
+		                     隐私设置
+		                </a>
+		            </li>
+		            <li class="mui-table-view-cell ">
+		                <a class="mui-navigate-right seting">
+		                     通用设置
+		                </a>
+		            </li>
+		            <li class="mui-table-view-cell ">
+		                <a class="mui-navigate-right seting">
+		                     客服中心
+		                </a>
+		            </li>
+		            <li class="mui-table-view-cell ">
+		                <a class="mui-navigate-right seting">
+		                     关于微博
+		                </a>
+		            </li>
+		            <li class="mui-table-view-cell">
+		                <a>
+		                     清除缓存
+		                </a>
+		            </li>
+		            <li class="mui-table-view-cell">
+		                <a>
+		                     护眼模式
+		                     <div class="mui-switch mui-switch-mini mui-active mui-switch-blue">
+		                       <div class="mui-switch-handle"></div>
+		                     </div>
+		                </a>
+		            </li>
+
+		        </ul>
+		    <ul class="mui-table-view" style="margin: 25px 0px 0px 0px;">
+		        <li class="mui-table-view-cell" style="text-align: center;color: red;">
+	                <a  href="javascript:logOut()">
+	                     退出		                
+	                </a>
+	            </li>
+		    </ul>
+		</div>
+	</body>
+<script type="text/javascript">
+	mui.init();
+	mui.plusReady(function () {
+		
+		var uid=plus.storage.getItem('uid');
+      		if(uid != null){
+      			mui("#name")[0].innerHTML = plus.storage.getItem('uname');
+   	    		mui("#face")[0].src       = plus.storage.getItem('uface');
+  			}
+		/*------------------------点击和拖动奇幻页面开始--------------------------------*/
+	    var _self  = plus.webview.currentWebview();                  //获取当前窗口
+	    var _prev  = plus.webview.getWebviewById("sub/sub3.html");   //获取前一个窗口首页
+	    var _index = plus.webview.getLaunchWebview();                //获取应用首页
+	    
+	    //当拖动当前页面向右移动时
+	    _self.drag({
+	    	direction:'right',
+	    	moveMode:'followFinger'
+	    },{
+	    	view:_prev,
+	    	moveMode:'follow'
+	    },function(e){
+	    	console.log(JSON.stringify(e));
+	    	if(e.type=='end' && e.result){
+	    		_index.evalJS('h("#navFooter").find("a").removeClass("mui-active");h("#sub3").addClass("mui-active");');
+	    		//_index.evalJS('mui("#indexTitle")[0].innerHTML="<h1 class="mui-title">发现</h1>";');
+	    	}
+	    });
+	    /*------------------------点击和拖动奇幻页面结束--------------------------------*/
+	    
+	    /*--------------------------点击登录开始-------------------------------------------*/
+	    /*mui("#login")[0].addEventListener('tap',function(){
+	    	wxlogin(goto);
+	    });*/
+	   
+	   /**************************登录********************************/
+	   
+	   mui("#chooseLogin")[0].addEventListener('tap',function(){
+	   	   var uid=plus.storage.getItem('uid');
+	   	   if(uid==null){
+   	   	        mui.openWindow({
+		   	    	url:'login.html',
+		   	    	id:'login.html',
+		   	    	style:{
+		   	   		 	width:"100%"
+	   	   	        }
+	   	     	});
+	   	    } 
+	   })
+	   
+	   
+	   /***********************************点击设置项跳转************************/
+	   var preload=mui.preload({url:'info.html',id:'info.html'});
+	   mui("#setInfo").on('tap','li',function(){
+	   	   var title=this.getElementsByClassName("seting")[0].innerText; 
+	   	   mui.fire(preload,'showSelf',{title:title});
+	   	   mui.openWindow({
+	   	   	url:"info.html",
+	   	   	id:"info.html",
+		   	   	style:{
+		   	   		width:"100%"
+		   	   	}
+	   	   })
+	   })
+	   
+	});
+</script>
+</html>

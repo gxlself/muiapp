@@ -1,0 +1,74 @@
+/*---------------------index.html   header--------------------------*/
+.index_header{
+	background:#D1D1D1;
+}
+.index_header_span{
+	position: absolute;
+	margin-top: 14px;
+	margin-left: 0px;
+}
+.index_search{
+	border-radius: 1000px;
+	width: 72%;
+	margin: 0 auto;
+}
+.index_header_icon{
+	position: absolute;
+	right: 0;
+	margin-top: 7px;
+	margin-right: 15px;
+	padding: 5px;
+	/*background: red;*/
+}
+
+/*-----------------------sub1.html  slider--------------------------------*/
+.mui-slider img{
+	height:150px
+}
+
+.sub1_info h3{
+	padding-left: 20px;
+}
+.sub1_info p{
+	padding-left: 20px;
+}
+
+/*--------------------------sub2.html----------------------------------------*/
+.infoSet{
+	padding:0px 14px;
+	width: 94%;
+	margin: 0 auto;
+	margin-top:15px;
+}
+.sub3_border{
+	border-bottom: 1px #D1D1D1 solid;
+}
+.sub3_li{
+	width: 94%;
+	margin: 0 auto;
+	list-style: none;
+}
+.sub3_info{
+	width: 55%;
+	height: 30px;
+	white-space: initial;
+	padding-bottom: 10px;
+}
+.sub3_p{
+	position: absolute;
+	bottom: 0px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*----------------------------sub3.html------------------------------------------*/
